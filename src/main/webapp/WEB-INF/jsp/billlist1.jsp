@@ -5,70 +5,50 @@
 
 <div class="right">
     <div class="location">
-        <strong>你现在所在的位置是:</strong> <span>用户管理页面</span>
+        <strong>你现在所在的位置是:</strong> <span>物业账单管理页面</span>
     </div>
     <div class="search">
-        <form method="get" action="${pageContext.request.contextPath }/user"
+        <form method="get" action="${pageContext.request.contextPath }/bill?opr=list"
               id="queryform">
-            <input type="hidden" name="opr" value="userList"/>
+            <input type="hidden" name="opr" value="list"/>
             <span>用户名：</span>
-            <input name="queryname" class="input-text"
-                                     type="text" value="${requestScope.queryUserName}"> <span>用户角色：</span>
-            <select name="queryUserRole">
-                <c:if test="${roleList != null }">
-                    <option value="0">--请选择--</option>
-                    <c:forEach var="role" items="${requestScope.roleList}">
-                        <option
-                                <c:if test="${role.id == requestScope.queryUserRole }">selected="selected"
-                        </c:if> value="${role.id}">${role.roleName}</option>
-                    </c:forEach>
-                </c:if>
-            </select>
             <input type="hidden" name="pageIndex" value="1"/>
+            <input type="text" name="username"/>
             <input value="查 询" type="submit" id="searchbutton">
-            <a href="${pageContext.request.contextPath}/user?opr=add">添加用户</a>
+            <a href="${pageContext.request.contextPath}/bill?opr=update">添加物业账单</a>
         </form>
     </div>
     <!--用户-->
     <table class="providerTable" cellpadding="0" cellspacing="0">
         <tr class="firstTr">
-            <th width="10%">用户编码</th>
-            <th width="20%">用户名称</th>
-            <th width="10%">性别</th>
-            <th width="20%">电话</th>
-            <th width="10%">用户角色</th>
+            <th width="10%">编号</th>
+            <th width="10%">用户名</th>
+            <th width="10%">状态</th>
+            <th width="10%">价格</th>
             <th width="30%">操作</th>
         </tr>
-        <c:forEach var="user" items="${requestScope.userList }" varStatus="status">
+        <c:forEach var="bill" items="${requestScope.billList }" varStatus="status">
             <tr>
-                <td><span>${user.userCode }</span>
+                <td><span>${bill.id }</span></td>
+                <td><span>${bill.username }</span></td>
+                <td>
+                    <span>
+                    <c:if test="${bill.status== 1}">未付款</c:if>
+                    <c:if test="${bill.status== 2}">已付款</c:if>
+                    </span>
                 </td>
-                <td><span>${user.userName }</span>
+                <td><span>${bill.price}</span>
                 </td>
-                <td><span> <c:if test="${user.gender==1}">男</c:if> <c:if
-                        test="${user.gender==2}">女</c:if> </span>
-                </td>
-                <td><span>${user.phone}</span>
-                </td>
-                <td><span>${user.roleName}</span>
-<%--                <span>${user.role.roleName}</span>--%>
-                </td>
-
-                <td><span><a class="viewUser" href="javascript:goViewUser(${user.id});"
-                             userid=${user.id } username=${user.userName }>
+                <td><span><a class="viewUser" href="javascript:goViewBill(${bill.id});"
+                             userid=${bill.id } username=${bill.username }>
 							<img src="${pageContext.request.contextPath }/statics/images/read.png"
                                  alt="查看" title="查看"/>
 					      </a> 
 					 </span>
 
                     <span>
-							<a class="modifyUser"
-                               href="${pageContext.request.contextPath }/user?opr=userModify&id=${user.id}">
-								<img src="${pageContext.request.contextPath}/statics/images/xiugai.png"
-                                     alt="修改" title="修改"/>
-						    </a> </span> <span>
 
-							<a class="deleteUser" userid=${user.id } username=${user.userName }
+							<a class="deleteBill" bill=${bill.id } username=${bill.id }
                                href="#">
 								<img src="${pageContext.request.contextPath }/statics/images/schu.png"
                                      alt="删除" title="删除"/>
@@ -142,7 +122,7 @@
     <div class="removerChid">
         <h2>提示</h2>
         <div class="removeMain">
-            <p>你确定要删除该用户吗？</p>
+            <p>你确定要删除该记录吗？</p>
             <a href="#" id="yes">确定</a> <a href="#" id="no">取消</a>
         </div>
     </div>
@@ -150,7 +130,7 @@
 
 <%@include file="/WEB-INF/jsp/common/foot.jsp" %>
 <script type="text/javascript"
-        src="${pageContext.request.contextPath }/statics/js/userlist.js"></script>
+        src="${pageContext.request.contextPath }/statics/js/visitorlist.js"></script>
 
 <script type="text/javascript">
     function goPage(pageindex) {
@@ -159,6 +139,62 @@
         //pageform.action=pageform.action+"id="+document.getElementById("input").value;
         pageform.submit();
     }
+    function goViewBill(id) {
+        window.location.href = "${pageContext.request.contextPath}/bill?opr=update&id="+id
+    }
+    function deleteBill(obj){
+        $.ajax({
+            type:"GET",
+            url:path+"/bill",
+            data:{opr:"del",uid:obj.attr("userid")},
+            dataType:"json",
+            success:function(data){
+                console.log(data.delResult)
+                if(data.delResult == "true"){//删除成功：移除删除行
+                    cancleBtn();
+                    obj.parents("tr").remove();
+                }else if(data.delResult == "false"){//删除失败
+                    //alert("对不起，删除用户【"+obj.attr("username")+"】失败");
+                    changeDLGContent("对不起，删除用户【"+obj.attr("username")+"】失败");
+                }else if(data.delResult == "notexist"){
+                    //alert("对不起，用户【"+obj.attr("username")+"】不存在");
+                    changeDLGContent("对不起，用户【"+obj.attr("username")+"】不存在");
+                }
+            },
+            error:function(data){
+                cancleBtn();
+                obj.parents("tr").remove();
+                //alert("对不起，删除失败");
+                // changeDLGContent("对不起，删除失败");
+            }
+        });
+    }
 
+    function openYesOrNoDLG(){
+        $('.zhezhao').css('display', 'block');
+        $('#removeUse').fadeIn();
+    }
 
+    function cancleBtn(){
+        $('.zhezhao').css('display', 'none');
+        $('#removeUse').fadeOut();
+    }
+
+    $('#no').click(function () {
+        cancleBtn();
+    });
+
+    $('#yes').click(function () {
+        deleteBill(userObj);
+    });
+    function changeDLGContent(contentStr){
+        var p = $(".removeMain").find("p");
+        p.html(contentStr);
+    }
+    $(".deleteBill").on("click",function(){
+        userObj = $(this);
+        console.log('测试111',userObj)
+        changeDLGContent("你确定要删除记录【"+userObj.attr("username")+"】吗？");
+        openYesOrNoDLG();
+    });
 </script>

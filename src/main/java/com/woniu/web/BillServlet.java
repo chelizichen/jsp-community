@@ -2,9 +2,9 @@ package com.woniu.web;
 
 
 import com.alibaba.fastjson.JSON;
-import com.woniu.entity.Car;
+import com.woniu.entity.Bill;
+import com.woniu.entity.Fixed;
 import com.woniu.entity.Owner;
-import com.woniu.entity.Visitor;
 import com.woniu.utils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
@@ -18,12 +18,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
-@WebServlet(name = "car",value = "/car")
-public class CarServlet extends HttpServlet {
+@WebServlet(name = "bill",value = "/bill")
+public class BillServlet extends HttpServlet {
 
     private QueryRunner queryRunner = new QueryRunner(DbUtils.getDataSource());
 
@@ -41,10 +39,10 @@ public class CarServlet extends HttpServlet {
         if(opr.equals("del")){
             String uid = request.getParameter("uid");
             if(uid != null){
-                String sql = " delete from car where id = " + uid;
+                String sql = " delete from bill where id = " + uid;
                 try {
                     int update = queryRunner.update(sql);
-                    request.getRequestDispatcher("/WEB-INF/jsp/carlist.jsp").forward(request,response);
+                    request.getRequestDispatcher("/WEB-INF/jsp/billlist1.jsp").forward(request,response);
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 }
@@ -52,13 +50,17 @@ public class CarServlet extends HttpServlet {
 
         }
         if(opr.equals("list")){
-            String sql = "select * from car  where 1 = 1 ";
+
+            String sql = "select bill.id," +
+                    "bill.userid,bill.price," +
+                    "bill.status,smbms_user.username" +
+                    " from bill inner join smbms_user on smbms_user.id = bill.userid where 1 = 1 ";
             if(request.getParameter("id") != null){
                 String id = request.getParameter("id");
-                sql += "and id = " +id;
+                sql += "and bill.id = " +id;
                 try {
                     System.out.println(sql);
-                    Car query = queryRunner.query(sql, new BeanHandler<Car>(Car.class));
+                    Bill query = queryRunner.query(sql, new BeanHandler<Bill>(Bill.class));
                     response.setContentType("application/json;charset=utf-8");
                     Object jsonStr = JSON.toJSON(query);
                     PrintWriter writer = response.getWriter();
@@ -69,52 +71,55 @@ public class CarServlet extends HttpServlet {
                 }
                 return;
             }
-
             try {
-                System.out.println(request.getParameter("username"));
                 if(request.getParameter("username") != null){
-                    sql += "and username like '%" + request.getParameter("username") + "%'";
+                    sql += "and smbms_user.username like '%" + request.getParameter("username") + "%'";
                 }
-                System.out.println("sql is " + sql);
-                List<Car> execute = queryRunner.query(sql, new BeanListHandler<Car>(Car.class));
-                request.setAttribute("carList",execute);
+                System.out.println("sql is" + sql);
+                List<Bill> execute = queryRunner.query(sql, new BeanListHandler<Bill>(Bill.class));
+                request.setAttribute("billList",execute);
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
-            request.getRequestDispatcher("/WEB-INF/jsp/carlist.jsp").forward(request,response);
+            request.getRequestDispatcher("/WEB-INF/jsp/billlist1.jsp").forward(request,response);
         }
         if(opr.equals("update")){
-            request.getRequestDispatcher("/WEB-INF/jsp/caradd.jsp").forward(request,response);
+            request.getRequestDispatcher("/WEB-INF/jsp/billadd.jsp").forward(request,response);
         }
+
         if(opr.equals("modify")){
-            SimpleDateFormat date = new SimpleDateFormat("yyyy.MM.dd.HH:mm:ss");
-            String iotime = date.format(new Date());
             String id = request.getParameter("id");
-            String username = request.getParameter("username");
-            String paytype = request.getParameter("paytype");
-            String carid = request.getParameter("carid");
-            String io = request.getParameter("io");
+            String userid = request.getParameter("userid");
+            String price = request.getParameter("price");
+            String status = request.getParameter("status");
             if(request.getParameter("id")!=null){
-                String sql = "update car set iotime = ?,username = ?,paytype = ?,io = ?,carid = ? where id = ?";
+                String sql = "update bill set userid = " + userid +
+                        ",price = "+price + ",status = " + status +" where id = " + id;
+
                 try {
-                    queryRunner.update(sql,iotime,username,paytype,io,id,carid);
+                    queryRunner.update(sql);
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 }
-
             }else{
-                String sql = "insert into car(iotime,username,paytype,io,carid) values(?,?,?,?)";
+                String sql = "insert into bill(userid,price,status) values(?,?,?)";
                 try {
-                    queryRunner.update(sql,iotime,username,paytype,io,id,carid);
+                    queryRunner.update(sql,userid,price,status);
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 }
             }
-            request.getRequestDispatcher("/WEB-INF/jsp/carlist.jsp").forward(request,response);
+            request.getRequestDispatcher("/WEB-INF/jsp/billlist1.jsp").forward(request,response);
         }
-
     }
 
+
+    //用户查询
+    private void findUserByCondition(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+
+
+        request.getRequestDispatcher("/WEB-INF/jsp/billlist1.jsp").forward(request,response);
+    }
 
 
 }

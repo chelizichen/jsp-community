@@ -6,14 +6,14 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>超市订单管理系统</title>
+    <title>物业管理系统</title>
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath }/statics/css/style.css" />
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath }/statics/css/public.css" />
 </head>
 <body>
 <!--头部-->
-    <header class="publicHeader">
-        <h1>超市订单管理系统</h1>
+    <header class="publicHe ader">
+        <h1>物业管理系统</h1>
         <div class="publicHeaderR">
             <p><span>下午好！</span><span style="color: #fff21b"> ${userSession.userName }</span> , 欢迎你！</p>
             <a href="${pageContext.request.contextPath }/user/logout.do">退出</a>
@@ -30,14 +30,16 @@
          <h2 class="leftH2"><span class="span1"></span>功能列表 <span></span></h2>
          <nav>
              <ul class="list">
-                 <li><a href="${pageContext.request.contextPath }/jsp/bill.do?method=query">订单管理</a></li>
+<%--                 <li><a href="${pageContext.request.contextPath }/jsp/bill.do?method=query">订单管理</a></li>--%>
                  <li><a href="${pageContext.request.contextPath }/user?opr=userList">用户管理</a></li>
                  <li><a href="${pageContext.request.contextPath }/visitor?opr=list">访客管理</a></li>
-                 <li><a href="${pageContext.request.contextPath }/visitor?opr=list">车辆管理</a></li>
-                 <li><a href="${pageContext.request.contextPath }/visitor?opr=list">维修管理</a></li>
-                 <li><a href="${pageContext.request.contextPath }/visitor?opr=list">访客管理</a></li>
-                 <li><a href="${pageContext.request.contextPath }/user/pwdmodify.do">密码修改</a></li>
-                 <li><a href="${pageContext.request.contextPath }/user/logout.do">退出系统</a></li>
+    <li><a href="${pageContext.request.contextPath }/owner?opr=list">业主管理</a></li>
+    <li><a href="${pageContext.request.contextPath }/house?opr=list">房屋管理</a></li>
+    <li><a href="${pageContext.request.contextPath }/car?opr=list">车辆管理</a></li>
+                 <li><a href="${pageContext.request.contextPath }/fixed?opr=list">维修管理</a></li>
+                 <li><a href="${pageContext.request.contextPath }/bill?opr=list">物业账单管理</a></li>
+<%--                 <li><a href="${pageContext.request.contextPath }/user/pwdmodify.do">密码修改</a></li>--%>
+<%--                 <li><a href="${pageContext.request.contextPath }/user/logout.do">退出系统</a></li>--%>
              </ul>
          </nav>
      </div>

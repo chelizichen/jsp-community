@@ -2,6 +2,7 @@ package com.woniu.web;
 
 
 import com.alibaba.fastjson.JSON;
+import com.woniu.entity.Owner;
 import com.woniu.entity.Role;
 import com.woniu.entity.User;
 import com.woniu.entity.Visitor;
@@ -20,6 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +58,22 @@ public class VisitorServlet extends HttpServlet {
         }
         if(opr.equals("list")){
             String sql = "select * from visitors  where 1 = 1 ";
+            if(request.getParameter("id") != null){
+                String id = request.getParameter("id");
+                sql += "and id = " +id;
+                try {
+                    System.out.println(sql);
+                    Visitor query = queryRunner.query(sql, new BeanHandler<Visitor>(Visitor.class));
+                    response.setContentType("application/json;charset=utf-8");
+                    Object jsonStr = JSON.toJSON(query);
+                    PrintWriter writer = response.getWriter();
+                    writer.write(jsonStr.toString());
+                    writer.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+                return;
+            }
             try {
                 System.out.println(request.getParameter("username"));
                 if(request.getParameter("username") != null){
@@ -67,6 +86,35 @@ public class VisitorServlet extends HttpServlet {
                 throwables.printStackTrace();
             }
             request.getRequestDispatcher("/WEB-INF/jsp/visitorlist.jsp").forward(request,response);
+        }
+        if(opr.equals("update")){
+            request.getRequestDispatcher("/WEB-INF/jsp/visitoradd.jsp").forward(request,response);
+        }
+        if(opr.equals("modify")){
+            SimpleDateFormat date = new SimpleDateFormat("yyyy.MM.dd.HH:mm:ss");
+            String iotime = date.format(new Date());
+            String id = request.getParameter("id");
+            String username = request.getParameter("username");
+            String reason = request.getParameter("reason");
+            String io = request.getParameter("io");
+            if(request.getParameter("id")!=null){
+                String sql = "update visitors set iotime = ?,username = ?,reason = ?,io = ? where id = ?";
+                try {
+                    queryRunner.update(sql,iotime,username,reason,io,id);
+                    request.getRequestDispatcher("/WEB-INF/jsp/visitorlist.jsp").forward(request,response);
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+
+            }else{
+                String sql = "insert into visitors(iotime,username,reason,io) values(?,?,?,?)";
+                try {
+                    queryRunner.update(sql,iotime,username,reason,io,id);
+                    request.getRequestDispatcher("/WEB-INF/jsp/visitorlist.jsp").forward(request,response);
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
         }
 
     }

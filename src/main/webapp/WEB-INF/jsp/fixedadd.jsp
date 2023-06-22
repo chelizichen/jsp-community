@@ -7,27 +7,40 @@
 <div class="right">
      <div class="location">
          <strong>你现在所在的位置是:</strong>
-         <span>物业账单管理 >> 物业账单更新页面</span>
+         <span>维修管理 >> 维修更新页面</span>
      </div>
      <div class="providerAdd">
          <div id="billForm" action="${pageContext.request.contextPath }">
              <!--div的class 为error是验证错误，ok是验证成功-->
              <input type="hidden" name="method" value="add">
              <div>
-                 <label for="userid">用户编码：</label>
+                 <label for="userid">用户编号：</label>
                  <input type="text" name="userid" id="userid" value="">
 				 <font color="red"></font>
              </div>
              <div>
-                 <label for="price">物业价格：</label>
-                 <input type="text" name="price" id="price" value="">
+                 <label for="fixedlevel">风险等级：</label>
+                 <input type="text" name="fixedlevel" id="fixedlevel" value="">
 				 <font color="red"></font>
              </div>
              <div>
-                 <label >是否付款：</label>
-                 <input type="radio" name="isPayment" value="1" checked="checked">未付款
-				 <input type="radio" name="isPayment" value="2" >已付款
+                 <label for="fixedtitle">维修标题：</label>
+                 <input type="text" name="fixedtitle" id="fixedtitle" value="">
+                 <font color="red"></font>
              </div>
+             <div>
+                 <label for="fixeddesc">维修细节描述：</label>
+                 <input type="text" name="fixeddesc" id="fixeddesc" value="">
+                 <font color="red"></font>
+             </div>
+             <div>
+                 <label >维修状态：</label>
+                 <input type="radio" name="fixedstatus" value="0" >未解决
+                 <input type="radio" name="fixedstatus" value="1" checked="checked">待解决
+                 <input type="radio" name="fixedstatus" value="2" >正在解决
+                 <input type="radio" name="fixedstatus" value="3" >已解决
+             </div>
+
              <div class="providerAddBtn">
                   <input type="button" name="add" id="add" value="保存">
 				  <input type="button" id="back" name="back" value="返回" >
@@ -58,43 +71,33 @@
     }
     let id = queryURLParameter(window.location.href).id
     if(id){
-        fetch(path+"/bill?opr=list&id="+id).then(res=>res.json()).then(res=>{
+        fetch(path+"/fixed?opr=list&id="+id).then(res=>res.json()).then(res=>{
             $('#userid').val(res.userid)
-            $('#price').val(res.price)
-            // $('#status').val(res.status)
-            if(Number(res.status) == 1){
-                $('input[name=\'isPayment\']')[0].check = true
-            }else{
-                $('input[name=\'isPayment\']')[1].check = true
-            }
-
+            $('#fixedlevel').val(res.fixedlevel)
+            $('#fixedtitle').val(res.fixedtitle)
+            $('#fixeddesc').val(res.fixeddesc)
+            $('input[name=\'fixedstatus\']').val(res.fixedstatus)
+            $('#paytype').val(res.paytype)
         })
     }
 $("#add").click(function () {
-    let status;
-    if($("input[name='isPayment']")[0].checked){
-        status = 1
-    }
-    if($("input[name='isPayment']")[1].checked){
-        status = 2
-    }
-
     const data = {
         userid:$('#userid').val(),
-        price:$('#price').val(),
-        status:$("input[name='isPayment']:checked").val(),
+        fixedlevel:$('#fixedlevel').val(),
+        fixedtitle:$('#fixedtitle').val(),
+        fixeddesc:$('#fixeddesc').val(),
+        fixedstatus:$("input[name='fixedstatus']:checked").val(),
         id,
     }
     $.ajax({
         type:"GET",//请求类型
-        url:path+"/bill?opr=modify",//请求的url
+        url:path+"/fixed?opr=modify",//请求的url
         data,//请求参数
         dataType:"json",//ajax接口（请求url）返回的数据类型
+        success:function(data){//data：返回数据（json对象）
+            window.alert("修改成功")
+        },
     })
-    setTimeout(()=>{
-        location.href = path+"/bill?opr=list"
-        window.alert("更新成功")
-    },1000)
 })
 
 </script>

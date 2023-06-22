@@ -27,10 +27,10 @@ li {
     height: 48px;
     line-height: 48px;
     font-size: 14px;
-    background: linear-gradient(to bottom, #60acf0, #64a5df, #62a0dd, #5994d6, #4f8ace, #4880ca);
-    background: -webkit-linear-gradient(to bottom, #60acf0, #64a5df, #62a0dd, #5994d6, #4f8ace, #4880ca);
-    background: -moz-linear-gradient(to bottom, #60acf0, #64a5df, #62a0dd, #5994d6, #4f8ace, #4880ca);
-    background: -ms-linear-gradient(to bottom, #60acf0, #64a5df, #62a0dd, #5994d6, #4f8ace, #4880ca);
+    background: linear-gradient(to bottom, #4F8B25, #4F8B25, #62A12F, #599547, #4F8B25, #488058);
+    background: -webkit-linear-gradient(to bottom, #4F8B25, #4F8B25, #62A12F, #599547, #4F8B25, #488058);
+    background: -moz-linear-gradient(to bottom, #4F8B25, #4F8B25, #62A12F, #599547, #4F8B25, #488058);
+    background: -ms-linear-gradient(to bottom, #4F8B25, #4F8B25, #62A12F, #599547, #4F8B25, #488058);
 }
 
 .publicHeader h1 {
@@ -39,7 +39,7 @@ li {
     font-size: 22px;
     padding-left: 80px;
     text-shadow: 2px 1px #000;
-    background: url("../images/buy.png") 30px center no-repeat;
+    /*background: url("../images/buy.png") 30px center no-repeat;*/
 
 }
 
@@ -172,7 +172,7 @@ li {
 }
 
 .list li:nth-child(5) {
-    background: url("../images/mm.png") 0 center no-repeat;
+    background: url("../images/buy.png") 0 center no-repeat;
 }
 
 .list li:nth-child(6) {

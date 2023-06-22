@@ -7,26 +7,38 @@
 <div class="right">
      <div class="location">
          <strong>你现在所在的位置是:</strong>
-         <span>物业账单管理 >> 物业账单更新页面</span>
+         <span>车辆管理 >> 车辆更新页面</span>
      </div>
      <div class="providerAdd">
          <div id="billForm" action="${pageContext.request.contextPath }">
              <!--div的class 为error是验证错误，ok是验证成功-->
              <input type="hidden" name="method" value="add">
              <div>
-                 <label for="userid">用户编码：</label>
-                 <input type="text" name="userid" id="userid" value="">
+                 <label for="username">用户名称：</label>
+                 <input type="text" name="username" id="username" value="">
 				 <font color="red"></font>
              </div>
              <div>
-                 <label for="price">物业价格：</label>
-                 <input type="text" name="price" id="price" value="">
-				 <font color="red"></font>
+                 <label for="carid">车牌号：</label>
+                 <input type="text" name="carid" id="carid" value="">
+                 <font color="red"></font>
+             </div>
+<%--             <div>--%>
+<%--                 <label for="reason">理由：</label>--%>
+<%--                 <input type="text" name="reason" id="reason" value="">--%>
+<%--				 <font color="red"></font>--%>
+<%--             </div>--%>
+             <div>
+                 <label >出入：</label>
+                 <input type="radio" name="io" value="1" checked="checked">出
+                 <input type="radio" name="io" value="2" >入
              </div>
              <div>
-                 <label >是否付款：</label>
-                 <input type="radio" name="isPayment" value="1" checked="checked">未付款
-				 <input type="radio" name="isPayment" value="2" >已付款
+                 <label >付款方式：</label>
+                 <input type="radio" name="paytype" value="Paypal" checked="checked">Paypal
+                 <input type="radio" name="paytype" value="ApplePay" >ApplePay
+                 <input type="radio" name="paytype" value="AliPay" >AliPay
+                 <input type="radio" name="paytype" value="WechatPay" >WechatPay
              </div>
              <div class="providerAddBtn">
                   <input type="button" name="add" id="add" value="保存">
@@ -58,43 +70,30 @@
     }
     let id = queryURLParameter(window.location.href).id
     if(id){
-        fetch(path+"/bill?opr=list&id="+id).then(res=>res.json()).then(res=>{
-            $('#userid').val(res.userid)
-            $('#price').val(res.price)
-            // $('#status').val(res.status)
-            if(Number(res.status) == 1){
-                $('input[name=\'isPayment\']')[0].check = true
-            }else{
-                $('input[name=\'isPayment\']')[1].check = true
-            }
-
+        fetch(path+"/car?opr=list&id="+id).then(res=>res.json()).then(res=>{
+            $('#username').val(res.username)
+            $('#carid').val(res.carid)
+            $('#io').val(res.io)
+            $('#paytype').val(res.paytype)
         })
     }
 $("#add").click(function () {
-    let status;
-    if($("input[name='isPayment']")[0].checked){
-        status = 1
-    }
-    if($("input[name='isPayment']")[1].checked){
-        status = 2
-    }
-
     const data = {
-        userid:$('#userid').val(),
-        price:$('#price').val(),
-        status:$("input[name='isPayment']:checked").val(),
+        username:$('#username').val(),
+        carid:$('#carid').val(),
+        io:$("input[name='io']:checked").val(),
+        paytype:$("input[name='paytype']:checked").val(),
         id,
     }
     $.ajax({
         type:"GET",//请求类型
-        url:path+"/bill?opr=modify",//请求的url
+        url:path+"/car?opr=modify",//请求的url
         data,//请求参数
         dataType:"json",//ajax接口（请求url）返回的数据类型
+        success:function(data){//data：返回数据（json对象）
+            window.alert("修改成功")
+        },
     })
-    setTimeout(()=>{
-        location.href = path+"/bill?opr=list"
-        window.alert("更新成功")
-    },1000)
 })
 
 </script>

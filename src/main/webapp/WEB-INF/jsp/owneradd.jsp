@@ -7,27 +7,35 @@
 <div class="right">
      <div class="location">
          <strong>你现在所在的位置是:</strong>
-         <span>物业账单管理 >> 物业账单更新页面</span>
+         <span>业主管理 >> 业主更新页面</span>
      </div>
      <div class="providerAdd">
          <div id="billForm" action="${pageContext.request.contextPath }">
              <!--div的class 为error是验证错误，ok是验证成功-->
              <input type="hidden" name="method" value="add">
              <div>
-                 <label for="userid">用户编码：</label>
-                 <input type="text" name="userid" id="userid" value="">
-				 <font color="red"></font>
+                 <label for="name">业主名称：</label>
+                 <input type="text" name="name" id="name" value="">
+                 <font color="red"></font>
              </div>
              <div>
-                 <label for="price">物业价格：</label>
-                 <input type="text" name="price" id="price" value="">
-				 <font color="red"></font>
+                 <label for="phone">电话：</label>
+                 <input type="text" name="phone" id="phone" value="">
+                 <font color="red"></font>
+             </div>
+
+             <div>
+                 <label for="email">名称：</label>
+                 <input type="text" name="email" id="email" value="">
+                 <font color="red"></font>
              </div>
              <div>
-                 <label >是否付款：</label>
-                 <input type="radio" name="isPayment" value="1" checked="checked">未付款
-				 <input type="radio" name="isPayment" value="2" >已付款
+                 <label for="address">业主地址：</label>
+                 <input type="text" name="address" id="address" value="">
+                 <font color="red"></font>
              </div>
+
+
              <div class="providerAddBtn">
                   <input type="button" name="add" id="add" value="保存">
 				  <input type="button" id="back" name="back" value="返回" >
@@ -57,45 +65,35 @@
         return obj;
     }
     let id = queryURLParameter(window.location.href).id
-    if(id){
-        fetch(path+"/bill?opr=list&id="+id).then(res=>res.json()).then(res=>{
-            $('#userid').val(res.userid)
-            $('#price').val(res.price)
-            // $('#status').val(res.status)
-            if(Number(res.status) == 1){
-                $('input[name=\'isPayment\']')[0].check = true
-            }else{
-                $('input[name=\'isPayment\']')[1].check = true
-            }
 
+    if(id){
+        fetch(path+"/owner?opr=list&id="+id).then(res=>res.json()).then(res=>{
+            $('#name').val(res.name)
+            $('#phone').val(res.phone)
+            $('#email').val(res.email)
+            $('#address').val(res.address)
         })
     }
-$("#add").click(function () {
-    let status;
-    if($("input[name='isPayment']")[0].checked){
-        status = 1
-    }
-    if($("input[name='isPayment']")[1].checked){
-        status = 2
-    }
 
+$("#add").click(function () {
     const data = {
-        userid:$('#userid').val(),
-        price:$('#price').val(),
-        status:$("input[name='isPayment']:checked").val(),
+        name:$('#userid').val(),
+        phone:$('#phone').val(),
+        email:$('#email').val(),
+        address:$('#address').val(),
         id,
     }
     $.ajax({
         type:"GET",//请求类型
-        url:path+"/bill?opr=modify",//请求的url
+        url:path+"/owner?opr=modify",//请求的url
         data,//请求参数
         dataType:"json",//ajax接口（请求url）返回的数据类型
+        success:function(data){//data：返回数据（json对象）
+            window.alert("修改成功")
+        },
     })
-    setTimeout(()=>{
-        location.href = path+"/bill?opr=list"
-        window.alert("更新成功")
-    },1000)
 })
+
 
 </script>
 <%--<script type="text/javascript" src="${pageContext.request.contextPath }/statics/js/billadd.js"></script>--%>
